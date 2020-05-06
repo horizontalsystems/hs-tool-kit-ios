@@ -1,0 +1,6 @@
+use_frameworks!
+target 'HsToolKit_Tests' do
+  pod 'HsToolKit', :path => '../'
+  
+  
+end
