@@ -1,6 +1,6 @@
+platform :ios, '11'
 use_frameworks!
+
 target 'HsToolKit_Tests' do
-  pod 'HsToolKit', :path => '../'
-  
-  
+  pod 'HsToolKit.swift', :path => '../'
 end

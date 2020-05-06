@@ -1,0 +1,31 @@
+PODS:
+  - Alamofire (5.1.0)
+  - HsToolKit.swift (1.0):
+    - Alamofire (~> 5.0)
+    - ObjectMapper (~> 3.0)
+    - RxSwift (~> 5.0)
+  - ObjectMapper (3.5.2)
+  - RxSwift (5.1.1)
+
+DEPENDENCIES:
+  - HsToolKit.swift (from `../`)
+
+SPEC REPOS:
+  trunk:
+    - Alamofire
+    - ObjectMapper
+    - RxSwift
+
+EXTERNAL SOURCES:
+  HsToolKit.swift:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  Alamofire: 9d5c5f602928e512395b30950c5984eca840093c
+  HsToolKit.swift: b89273c4018e3b70894e820c88cee8b684be9305
+  ObjectMapper: b53ae947d370bf89423e86be7d4e2d2b2a8d3f40
+  RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
+
+PODFILE CHECKSUM: 544bec85a61b66929cbcca8270b9aba77d016d8b
+
+COCOAPODS: 1.9.1
