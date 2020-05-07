@@ -3,15 +3,19 @@ import Alamofire
 
 public class NetworkManager {
     public let session: Session
+    private var logger: Logger?
 
     public init(logger: Logger? = nil) {
         let networkLogger = NetworkLogger(logger: logger)
         session = Session(eventMonitors: [networkLogger])
+        self.logger = logger
     }
 
     public func single<Mapper: IApiMapper>(request: DataRequest, mapper: Mapper) -> Single<Mapper.T> {
-        Single<Mapper.T>.create { observer in
-            let requestReference = request.response(queue: DispatchQueue.global(qos: .background), responseSerializer: JsonMapperResponseSerializer<Mapper>(mapper: mapper))
+        let serializer = JsonMapperResponseSerializer<Mapper>(mapper: mapper, logger: logger)
+
+        return Single<Mapper.T>.create { observer in
+            let requestReference = request.response(queue: DispatchQueue.global(qos: .background), responseSerializer: serializer)
             { response in
                 switch response.result {
                 case .success(let result):
@@ -41,13 +45,13 @@ extension NetworkManager {
         }
 
         func requestDidResume(_ request: Request) {
-            logger?.verbose("API OUT: \(request)")
+            logger?.debug("API OUT: \(request)")
         }
 
         func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {
             switch response.result {
             case .success(let result):
-                logger?.verbose("API IN: \(request)\n\(result)")
+                logger?.debug("API IN: \(request)\n\(result)")
             case .failure(let error):
                 logger?.error("API IN: \(request)\n\(NetworkManager.unwrap(error: error))")
             }
@@ -61,11 +65,13 @@ extension NetworkManager {
 
     class JsonMapperResponseSerializer<Mapper: IApiMapper>: ResponseSerializer {
         private let mapper: Mapper
+        private var logger: Logger?
 
         private let jsonSerializer = JSONResponseSerializer()
 
-        init(mapper: Mapper) {
+        init(mapper: Mapper, logger: Logger?) {
             self.mapper = mapper
+            self.logger = logger
         }
 
         func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> Mapper.T {
@@ -74,6 +80,11 @@ extension NetworkManager {
             }
 
             let json = try? jsonSerializer.serialize(request: request, response: response, data: data, error: nil)
+
+            if let json = json {
+                logger?.verbose("JSON Response:\n\(json)")
+            }
+
             return try mapper.map(statusCode: response.statusCode, data: json)
         }
 
