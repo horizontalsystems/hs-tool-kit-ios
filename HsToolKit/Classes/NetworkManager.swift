@@ -7,7 +7,10 @@ public class NetworkManager {
 
     public init(logger: Logger? = nil) {
         let networkLogger = NetworkLogger(logger: logger)
-        session = Session(eventMonitors: [networkLogger])
+        session = Session(
+                cachedResponseHandler: ResponseCacher(behavior: .doNotCache),
+                eventMonitors: [networkLogger]
+        )
         self.logger = logger
     }
 
@@ -46,6 +49,10 @@ extension NetworkManager {
 
         func requestDidResume(_ request: Request) {
             logger?.debug("API OUT: \(request)")
+        }
+
+        func requestIsRetrying(_ request: Request) {
+            logger?.warning("API RETRY: \(request)")
         }
 
         func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {
