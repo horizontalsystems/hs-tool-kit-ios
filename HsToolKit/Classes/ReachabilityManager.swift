@@ -40,3 +40,11 @@ extension ReachabilityManager: IReachabilityManager {
     }
 
 }
+
+extension ReachabilityManager {
+
+    public enum ReachabilityError: Error {
+        case notReachable
+    }
+
+}
