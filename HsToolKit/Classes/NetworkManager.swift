@@ -7,10 +7,7 @@ public class NetworkManager {
 
     public init(logger: Logger? = nil) {
         let networkLogger = NetworkLogger(logger: logger)
-        session = Session(
-                cachedResponseHandler: ResponseCacher(behavior: .doNotCache),
-                eventMonitors: [networkLogger]
-        )
+        session = Session(eventMonitors: [networkLogger])
         self.logger = logger
     }
 
