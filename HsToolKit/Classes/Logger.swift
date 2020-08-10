@@ -1,5 +1,9 @@
 import Foundation
 
+public protocol ILogStorage {
+    func log(date: Date, level: Logger.Level, message: String, file: String?, function: String?, line: Int?, context: [String]?)
+}
+
 public class Logger {
 
     public enum Level: Int {
@@ -27,74 +31,99 @@ public class Logger {
     }()
 
     private let minLogLevel: Level
+    private let storage: ILogStorage?
+    private let scope: String?
+    private let delegate: Logger?
 
-    public init(minLogLevel: Level) {
+    public init(minLogLevel: Level, storage: ILogStorage? = nil) {
         self.minLogLevel = minLogLevel
+        self.storage = storage
+        self.scope = nil
+        self.delegate = nil
     }
 
-    private let includeFiles: [String] = [
-        // "PeerConnection",
-        // "Peer",
-    ]
-    private let excludeFiles: [String] = []
+    fileprivate init(minLogLevel: Level, scope: String, delegate: Logger) {
+        self.minLogLevel = minLogLevel
+        self.storage = nil
+        self.scope = scope
+        self.delegate = delegate
+    }
+
+    public func scoped(with scope: String) -> Logger {
+        Logger(minLogLevel: self.minLogLevel, scope: scope, delegate: self)
+    }
 
     /// log something generally unimportant (lowest priority)
-    public func verbose(_ message: @autoclosure () -> Any, _
-    file: String = #file, _ function: String = #function, line: Int = #line, context: Any? = nil) {
-        log(level: .verbose, message: message(), file: file, function: function, line: line, context: context)
+    public func verbose(_ message: @autoclosure () -> Any,
+                        _ file: String? = nil, _ function: String? = nil, line: Int? = nil, context: [String]? = nil, save: Bool = false) {
+        log(level: .verbose, message: message(), file: file, function: function, line: line, context: context, save: save)
     }
 
     /// log something which help during debugging (low priority)
-    public func debug(_ message: @autoclosure () -> Any, _
-    file: String = #file, _ function: String = #function, line: Int = #line, context: Any? = nil) {
-        log(level: .debug, message: message(), file: file, function: function, line: line, context: context)
+    public func debug(_ message: @autoclosure () -> Any,
+                      _ file: String? = nil, _ function: String? = nil, line: Int? = nil, context: [String]? = nil, save: Bool = false) {
+        log(level: .debug, message: message(), file: file, function: function, line: line, context: context, save: save)
     }
 
     /// log something which you are really interested but which is not an issue or error (normal priority)
-    public func info(_ message: @autoclosure () -> Any, _
-    file: String = #file, _ function: String = #function, line: Int = #line, context: Any? = nil) {
-        log(level: .info, message: message(), file: file, function: function, line: line, context: context)
+    public func info(_ message: @autoclosure () -> Any,
+                     _ file: String? = nil, _ function: String? = nil, line: Int? = nil, context: [String]? = nil, save: Bool = false) {
+        log(level: .info, message: message(), file: file, function: function, line: line, context: context, save: save)
     }
 
     /// log something which may cause big trouble soon (high priority)
-    public func warning(_ message: @autoclosure () -> Any, _
-    file: String = #file, _ function: String = #function, line: Int = #line, context: Any? = nil) {
-        log(level: .warning, message: message(), file: file, function: function, line: line, context: context)
+    public func warning(_ message: @autoclosure () -> Any,
+                        _ file: String? = nil, _ function: String? = nil, line: Int? = nil, context: [String]? = nil, save: Bool = false) {
+        log(level: .warning, message: message(), file: file, function: function, line: line, context: context, save: save)
     }
 
     /// log something which will keep you awake at night (highest priority)
-    public func error(_ message: @autoclosure () -> Any, _
-    file: String = #file, _ function: String = #function, line: Int = #line, context: Any? = nil) {
-        log(level: .error, message: message(), file: file, function: function, line: line, context: context)
+    public func error(_ message: @autoclosure () -> Any,
+                      _ file: String? = nil, _ function: String? = nil, line: Int? = nil, context: [String]? = nil, save: Bool = false) {
+        log(level: .error, message: message(), file: file, function: function, line: line, context: context, save: save)
     }
 
     /// custom logging to manually adjust values, should just be used by other frameworks
     public func log(level: Logger.Level, message: @autoclosure () -> Any,
-             file: String = #file, function: String = #function, line: Int = #line, context: Any? = nil) {
+                    file: String? = nil, function: String? = nil, line: Int? = nil, context: [String]? = nil, save: Bool = false) {
+
+        if let delegate = delegate {
+            var scopedContext = context ?? [String]()
+            if let scope = scope {
+                scopedContext.insert(scope, at: 0)
+            }
+
+            delegate.log(level: level, message: message(), file: file, function: function, line: line, context: scopedContext)
+            return
+        }
+
+        if let storage = storage, save {
+            storage.log(date: Date(), level: level, message: "\(message())", file: file, function: function, line: line, context: context)
+        }
 
         guard level.rawValue >= minLogLevel.rawValue else {
             return
         }
 
-        let file = fileNameWithoutSuffix(file)
-
-        guard includeFiles.isEmpty || includeFiles.contains(file) else {
-            return
-        }
-
-        guard excludeFiles.isEmpty || !excludeFiles.contains(file) else {
-            return
-        }
-
-        //        var str = "\(dateFormatter.string(from: Date())) \(colors[level]!)[\(threadName())]"
         var str = "\(dateFormatter.string(from: Date())) \(colors[level]!)"
 
-        if let context = context {
-            str = str + " \(context) "
+        if let file = file {
+            str = str + " \(fileNameWithoutSuffix(file)) "
+
+            if let function = function {
+                str = str + " \(function) "
+            }
+
+            if let line = line {
+                str = str + " \(line) "
+            }
         }
 
-        //        str = str + " \(file).\(functionName(function)):\(line) - \(message())"
-        str = str + "\(message())"
+        if let context = context {
+            str = str + " \(context.joined(separator: " "))"
+        }
+
+        str = str + ": \(message())"
 
         print(str)
     }
