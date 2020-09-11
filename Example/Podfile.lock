@@ -1,6 +1,6 @@
 PODS:
   - Alamofire (5.1.0)
-  - HsToolKit.swift (1.0):
+  - HsToolKit.swift (1.1.0):
     - Alamofire (~> 5.0)
     - ObjectMapper (~> 3.0)
     - RxSwift (~> 5.0)
@@ -22,7 +22,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Alamofire: 9d5c5f602928e512395b30950c5984eca840093c
-  HsToolKit.swift: b89273c4018e3b70894e820c88cee8b684be9305
+  HsToolKit.swift: d47ef3e8c507a6e980f2f6d819c5b0cf05845910
   ObjectMapper: b53ae947d370bf89423e86be7d4e2d2b2a8d3f40
   RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
 
