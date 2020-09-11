@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name             = 'HsToolKit.swift'
   s.module_name      = 'HsToolKit'
-  s.version          = '1.0'
+  s.version          = '1.1.0'
   s.summary          = 'NetworkManager, Logger'
 
   s.homepage         = 'https://github.com/horizontalsystems/hs-tool-kit-ios'
