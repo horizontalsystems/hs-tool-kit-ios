@@ -31,6 +31,38 @@ public class NetworkManager {
         }
     }
 
+    public func single<Mapper: IApiMapper>(urlString: URLConvertible, method: HTTPMethod, parameters: Parameters,
+                                           interceptor: RequestInterceptor, mapper: Mapper, responseCacherBehavior: ResponseCacher.Behavior?) -> Single<Mapper.T> {
+        let serializer = JsonMapperResponseSerializer<Mapper>(mapper: mapper, logger: logger)
+
+        return Single<Mapper.T>.create { [weak self] observer in
+            guard let manager = self else{
+                observer(.error(NetworkManager.RequestError.disposed))
+                return Disposables.create()
+            }
+
+            var request = manager.session.request(urlString, method: method, parameters: parameters, interceptor: interceptor)
+
+            if let behavior = responseCacherBehavior {
+                request = request.cacheResponse(using: ResponseCacher(behavior: behavior))
+            }
+
+            let requestReference = request.response(queue: DispatchQueue.global(qos: .background), responseSerializer: serializer)
+            { response in
+                switch response.result {
+                case .success(let result):
+                    observer(.success(result))
+                case .failure(let error):
+                    observer(.error(NetworkManager.unwrap(error: error)))
+                }
+            }
+
+            return Disposables.create {
+                requestReference.cancel()
+            }
+        }
+    }
+
 }
 
 extension NetworkManager {
@@ -113,6 +145,7 @@ extension NetworkManager {
     public enum RequestError: Error {
         case invalidResponse(statusCode: Int, data: Any?)
         case noResponse(reason: String?)
+        case disposed
     }
 
 }
