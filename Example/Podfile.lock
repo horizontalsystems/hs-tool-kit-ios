@@ -1,11 +1,48 @@
 PODS:
-  - Alamofire (5.1.0)
+  - Alamofire (5.4.2)
+  - CNIOAtomics (2.27.0)
+  - CNIOBoringSSL (2.10.5)
+  - CNIOBoringSSLShims (2.10.5):
+    - CNIOBoringSSL (= 2.10.5)
+  - CNIODarwin (2.27.0)
+  - CNIOHTTPParser (2.27.0)
+  - CNIOLinux (2.27.0)
+  - CNIOSHA1 (2.27.0)
+  - CNIOWindows (2.27.0)
   - HsToolKit.swift (1.1.0):
     - Alamofire (~> 5.0)
-    - ObjectMapper (~> 3.0)
+    - ObjectMapper (~> 4.0)
     - RxSwift (~> 5.0)
-  - ObjectMapper (3.5.2)
-  - RxSwift (5.1.1)
+    - SwiftNIOFoundationCompat
+    - SwiftNIOSSL
+    - SwiftNIOWebSocket
+  - ObjectMapper (4.2.0)
+  - RxSwift (5.1.2)
+  - SwiftNIO (2.27.0):
+    - CNIODarwin (= 2.27.0)
+    - CNIOLinux (= 2.27.0)
+    - CNIOWindows (= 2.27.0)
+    - SwiftNIOConcurrencyHelpers (= 2.27.0)
+  - SwiftNIOConcurrencyHelpers (2.27.0):
+    - CNIOAtomics (= 2.27.0)
+  - SwiftNIOFoundationCompat (2.27.0):
+    - SwiftNIO (= 2.27.0)
+  - SwiftNIOHTTP1 (2.27.0):
+    - CNIOHTTPParser (= 2.27.0)
+    - SwiftNIO (= 2.27.0)
+    - SwiftNIOConcurrencyHelpers (= 2.27.0)
+  - SwiftNIOSSL (2.10.5):
+    - CNIOBoringSSL (= 2.10.5)
+    - CNIOBoringSSLShims (= 2.10.5)
+    - SwiftNIO (< 3, >= 2.15.0)
+    - SwiftNIOConcurrencyHelpers (< 3, >= 2.15.0)
+    - SwiftNIOTLS (< 3, >= 2.15.0)
+  - SwiftNIOTLS (2.27.0):
+    - SwiftNIO (= 2.27.0)
+  - SwiftNIOWebSocket (2.27.0):
+    - CNIOSHA1 (= 2.27.0)
+    - SwiftNIO (= 2.27.0)
+    - SwiftNIOHTTP1 (= 2.27.0)
 
 DEPENDENCIES:
   - HsToolKit.swift (from `../`)
@@ -13,18 +50,48 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Alamofire
+    - CNIOAtomics
+    - CNIOBoringSSL
+    - CNIOBoringSSLShims
+    - CNIODarwin
+    - CNIOHTTPParser
+    - CNIOLinux
+    - CNIOSHA1
+    - CNIOWindows
     - ObjectMapper
     - RxSwift
+    - SwiftNIO
+    - SwiftNIOConcurrencyHelpers
+    - SwiftNIOFoundationCompat
+    - SwiftNIOHTTP1
+    - SwiftNIOSSL
+    - SwiftNIOTLS
+    - SwiftNIOWebSocket
 
 EXTERNAL SOURCES:
   HsToolKit.swift:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Alamofire: 9d5c5f602928e512395b30950c5984eca840093c
-  HsToolKit.swift: c639d06f1c0e3e8d6751c9a97c903165a8803b91
-  ObjectMapper: b53ae947d370bf89423e86be7d4e2d2b2a8d3f40
-  RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
+  Alamofire: bfbc4c2fe5909b1d94fb4ef2277c6b3727ef5dae
+  CNIOAtomics: 43316aa185f4bd639aa0a9cd49741151bbe8de7f
+  CNIOBoringSSL: 7ff9c35139a115f93269915b9555044d741b2ac9
+  CNIOBoringSSLShims: 6edde63429e353ba78992b2d4d1b0627752a4a43
+  CNIODarwin: 9eb3c09e9f3fc5ed47cecdd032aad926df81e3a6
+  CNIOHTTPParser: c6051552c5f332e4ec0756581e5cbd5632ca24e6
+  CNIOLinux: 79227941d64216792c3c59238b0106b9e0df25bc
+  CNIOSHA1: f9ce281bdb9a1ed0792da24358ed8004761258d0
+  CNIOWindows: f2baa102255e986467578337ffa2f777cb6bdf7f
+  HsToolKit.swift: a72793d6b052cfbe36198353d57f99dac2bba948
+  ObjectMapper: 1eb41f610210777375fa806bf161dc39fb832b81
+  RxSwift: 1e2e1f9570186967f617e49128ed26ccf1bafc8e
+  SwiftNIO: 81d33ce8c500b7e41b6cdde5f2f12330b9750219
+  SwiftNIOConcurrencyHelpers: 23fc68bac541a465162d7225d2c743edd2f1012c
+  SwiftNIOFoundationCompat: 0e52ac0e2c9b7b60ff9141eebb64f5a82d974118
+  SwiftNIOHTTP1: 846277d7fc7661fba655540e529d7ba3c728ca50
+  SwiftNIOSSL: 6a1f0499a5319e823eae0b6f053ecb502bcce3f5
+  SwiftNIOTLS: 4f8df225f03393f08e0b47b4d876ae38167f8a27
+  SwiftNIOWebSocket: 375808226f357aaaac832ee02132ce29ec2ff5b4
 
 PODFILE CHECKSUM: 987a3bed84da1fb026d07991f5e585e239d9824e
 

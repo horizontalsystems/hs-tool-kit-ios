@@ -18,4 +18,7 @@ Pod::Spec.new do |s|
   s.dependency 'Alamofire', '~> 5.0'
   s.dependency 'RxSwift', '~> 5.0'
   s.dependency 'ObjectMapper', '~> 4.0'
+  s.dependency 'SwiftNIOWebSocket'
+  s.dependency 'SwiftNIOSSL'
+  s.dependency 'SwiftNIOFoundationCompat'
 end
