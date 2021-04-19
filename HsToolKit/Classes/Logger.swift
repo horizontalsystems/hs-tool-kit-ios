@@ -93,7 +93,8 @@ public class Logger {
                 scopedContext.insert(scope, at: 0)
             }
 
-            delegate.log(level: level, message: message(), file: file, function: function, line: line, context: scopedContext, save: save)
+            let resolvedMessage = message()
+            delegate.log(level: level, message: resolvedMessage, file: file, function: function, line: line, context: scopedContext, save: save)
             return
         }
 
