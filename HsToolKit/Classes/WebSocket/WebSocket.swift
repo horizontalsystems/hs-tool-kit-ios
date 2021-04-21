@@ -64,12 +64,13 @@ public class WebSocket: NSObject {
             })
             .disposed(by: disposeBag)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(appCameToForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
-    }
-
-    @objc func appCameToForeground() {
-        disconnect(code: .normalClosure, error: WebSocketState.DisconnectError.socketDisconnected(reason: "App in background mode"))
-        connect()
+        BackgroundModeObserver.shared
+            .foregroundFromExpiredBackgroundObservable
+            .subscribe(onNext: { [weak self] _ in
+                self?.disconnect(code: .normalClosure, error: WebSocketState.DisconnectError.socketDisconnected(reason: "App in background mode"))
+                self?.connect()
+            })
+            .disposed(by: disposeBag)
     }
 
     private func connect() {
@@ -113,7 +114,8 @@ public class WebSocket: NSObject {
             }
 
             self?.logger?.debug("WebSocket disconnected by server")
-            self?.state = .disconnected(error: WebSocketState.DisconnectError.notStarted)
+            self?.disconnect(code: .unexpectedServerError, error: WebSocketState.DisconnectError.socketDisconnected(reason: "Unexpected Server Error"))
+            self?.connect()
         }
 
         webSocket.onText { [weak self] _, text in
