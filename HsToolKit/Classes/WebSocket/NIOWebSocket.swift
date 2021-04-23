@@ -351,7 +351,11 @@ extension NIOWebSocket {
             on eventLoopGroup: EventLoopGroup,
             onUpgrade: @escaping (NIOWebSocket) -> ()
     ) -> EventLoopFuture<Void> {
-        let scheme = url.scheme ?? "ws"
+        let scheme: String
+        switch url.scheme {
+        case "wss", "https": scheme = "wss"
+        default: scheme = "ws"
+        }
         return self.connect(
                 scheme: scheme,
                 host: url.host ?? "localhost",
