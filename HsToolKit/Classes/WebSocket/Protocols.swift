@@ -38,10 +38,8 @@ protocol INIOWebSocket: AnyObject {
     func onPong(_ callback: @escaping (NIOWebSocket) -> ())
     func onPing(_ callback: @escaping (NIOWebSocket) -> ())
     func onError(_ callback: @escaping (NIOWebSocketError) -> ())
-    func send<S>(_ text: S, promise: EventLoopPromise<Void>?) where S: Collection, S.Element == Character
-    func send(_ binary: [UInt8], promise: EventLoopPromise<Void>?)
     func sendPing(promise: EventLoopPromise<Void>?)
-    func send<Data>(raw data: Data, opcode: WebSocketOpcode, fin: Bool, promise: EventLoopPromise<Void>?) where Data: DataProtocol
+    func send<Data>(raw data: Data, opcode: WebSocketOpcode, fin: Bool, completionHandler: ((Error?) -> ())?) where Data: DataProtocol
     func close(code: WebSocketErrorCode) -> EventLoopFuture<Void>
 }
 

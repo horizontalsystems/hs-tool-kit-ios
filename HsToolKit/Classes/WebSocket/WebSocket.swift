@@ -159,7 +159,7 @@ extension WebSocket: IWebSocket {
             throw WebSocketState.StateError.notConnected
         }
 
-        nioWebSocket?.send(raw: data, opcode: .binary, fin: true, promise: nil)
+        nioWebSocket?.send(raw: data, opcode: .binary, fin: true, completionHandler: completionHandler)
     }
 
     public func send(ping: Data) throws {
