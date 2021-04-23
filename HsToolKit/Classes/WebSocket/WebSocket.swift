@@ -100,7 +100,7 @@ public class WebSocket: NSObject {
 
     private func disconnect(code: WebSocketErrorCode, error: Error = WebSocketState.DisconnectError.notStarted) {
         logger?.debug("Disconnecting from websocket")
-        try? nioWebSocket?.close(code: code).wait()
+        eventLoopGroup.shutdownGracefully { _ in }
         state = .disconnected(error: error)
     }
 
