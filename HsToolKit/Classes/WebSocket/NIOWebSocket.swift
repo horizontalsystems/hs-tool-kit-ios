@@ -88,7 +88,7 @@ final class NIOWebSocket: INIOWebSocket {
         }
     }
 
-    func send<S>(_ text: S, promise: EventLoopPromise<Void>? = nil)
+    private func send<S>(_ text: S, promise: EventLoopPromise<Void>? = nil)
             where S: Collection, S.Element == Character
     {
         let string = String(text)
@@ -98,20 +98,25 @@ final class NIOWebSocket: INIOWebSocket {
 
     }
 
-    func send(_ binary: [UInt8], promise: EventLoopPromise<Void>? = nil) {
+    private func send(_ binary: [UInt8], promise: EventLoopPromise<Void>? = nil) {
         self.send(raw: binary, opcode: .binary, fin: true, promise: promise)
     }
 
-    func sendPing(promise: EventLoopPromise<Void>? = nil) {
-        self.send(
-                raw: Data(),
-                opcode: .ping,
-                fin: true,
-                promise: promise
-        )
+    private func convertToPromise(completionHandler: ((Error?) -> ())?) -> EventLoopPromise<Void>? {
+        completionHandler.flatMap { handler in
+            let promise: EventLoopPromise<Void> = channel.eventLoop.makePromise()
+            promise.futureResult.whenComplete { result in
+                switch result {
+                case .success(_): handler(nil)
+                case .failure(let error): handler(error)
+                }
+            }
+
+            return promise
+        }
     }
 
-    func send<Data>(
+    private func send<Data>(
             raw data: Data,
             opcode: WebSocketOpcode,
             fin: Bool = true,
@@ -129,6 +134,19 @@ final class NIOWebSocket: INIOWebSocket {
         )
 
         channel.writeAndFlush(frame, promise: promise)
+    }
+
+    func sendPing(promise: EventLoopPromise<Void>? = nil) {
+        self.send(
+                raw: Data(),
+                opcode: .ping,
+                fin: true,
+                promise: promise
+        )
+    }
+
+    func send<Data2>(raw data: Data2, opcode: WebSocketOpcode, fin: Bool, completionHandler: ((Error?) -> ())?) where Data2: DataProtocol {
+        send(raw: data, opcode: opcode, fin: fin, promise: convertToPromise(completionHandler: completionHandler))
     }
 
     func close(code: WebSocketErrorCode = .goingAway) -> EventLoopFuture<Void> {
