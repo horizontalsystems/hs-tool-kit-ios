@@ -73,12 +73,20 @@ public class WebSocket: NSObject {
             .disposed(by: disposeBag)
     }
 
+    deinit {
+        eventLoopGroup.shutdownGracefully { _ in }
+    }
+
     private func connect() {
         guard case .disconnected = state, isStarted else {
             return
         }
         state = .connecting
         logger?.debug("Connecting to \(url)")
+
+        if let socket = nioWebSocket {
+            try? socket.close(code: .normalClosure).wait()
+        }
 
         var headers = HTTPHeaders()
         
@@ -99,8 +107,8 @@ public class WebSocket: NSObject {
     }
 
     private func disconnect(code: WebSocketErrorCode, error: Error = WebSocketState.DisconnectError.notStarted) {
-        logger?.debug("Disconnecting from websocket")
-        eventLoopGroup.shutdownGracefully { _ in }
+        logger?.debug("Disconnecting from websocket with code: \(code); error: \(error)")
+        nioWebSocket?.close(code: code)
         state = .disconnected(error: error)
     }
 
@@ -108,6 +116,8 @@ public class WebSocket: NSObject {
         nioWebSocket = webSocket
 
         webSocket.onClose.whenSuccess { [weak self, weak webSocket] _ in
+            self?.nioWebSocket = nil
+
             guard let lastSocket = webSocket, !lastSocket.waitingForClose else {
                 self?.logger?.debug("WebSocket disconnected by client")
                 return
