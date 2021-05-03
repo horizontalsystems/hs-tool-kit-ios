@@ -116,8 +116,6 @@ public class WebSocket: NSObject {
         nioWebSocket = webSocket
 
         webSocket.onClose.whenSuccess { [weak self, weak webSocket] _ in
-            self?.nioWebSocket = nil
-
             guard let lastSocket = webSocket, !lastSocket.waitingForClose else {
                 self?.logger?.debug("WebSocket disconnected by client")
                 return

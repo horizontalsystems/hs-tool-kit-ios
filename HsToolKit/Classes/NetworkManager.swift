@@ -78,7 +78,7 @@ extension NetworkManager {
         func requestDidResume(_ request: Request) {
             var parametersLog = ""
 
-            if let data = request.request?.httpBody, let json = try? JSONSerialization.jsonObject(with: data), let data = try? JSONSerialization.data(withJSONObject: json, options: [.sortedKeys, .prettyPrinted]), let string = String(data: data, encoding: .utf8) {
+            if let httpBody = request.request?.httpBody, let json = try? JSONSerialization.jsonObject(with: httpBody), let data = try? JSONSerialization.data(withJSONObject: json, options: [.sortedKeys, .prettyPrinted]), let string = String(data: data, encoding: .utf8) {
                 parametersLog = "\n\(string)"
             }
 
