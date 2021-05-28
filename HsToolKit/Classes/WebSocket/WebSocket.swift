@@ -66,6 +66,7 @@ public class WebSocket: NSObject {
 
         BackgroundModeObserver.shared
             .foregroundFromExpiredBackgroundObservable
+            .observeOn(ConcurrentDispatchQueueScheduler(qos: .userInitiated))
             .subscribe(onNext: { [weak self] _ in
                 self?.disconnect(code: .normalClosure, error: WebSocketState.DisconnectError.socketDisconnected(reason: "App in background mode"))
                 self?.connect()
@@ -81,12 +82,17 @@ public class WebSocket: NSObject {
         guard case .disconnected = state, isStarted else {
             return
         }
-        state = .connecting
-        logger?.debug("Connecting to \(url)")
 
         if let socket = nioWebSocket {
-            try? socket.close(code: .normalClosure).wait()
+            socket.close(code: .normalClosure).whenComplete { [weak self] _ in
+                self?.nioWebSocket = nil
+                self?.connect()
+            }
+            return
         }
+
+        state = .connecting
+        logger?.debug("Connecting to \(url)")
 
         var headers = HTTPHeaders()
         
