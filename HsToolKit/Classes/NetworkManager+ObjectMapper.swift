@@ -12,11 +12,11 @@ extension NetworkManager {
         single(request: request, mapper: ObjectArrayMapper<T>())
     }
 
-    public func single<T: ImmutableMappable>(url: URLConvertible, method: HTTPMethod, parameters: Parameters, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, interceptor: RequestInterceptor? = nil, responseCacherBehavior: ResponseCacher.Behavior? = nil) -> Single<T> {
+    public func single<T: ImmutableMappable>(url: URLConvertible, method: HTTPMethod, parameters: Parameters = [:], encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, interceptor: RequestInterceptor? = nil, responseCacherBehavior: ResponseCacher.Behavior? = nil) -> Single<T> {
         single(url: url, method: method, parameters: parameters, mapper: ObjectMapper<T>(), encoding: encoding, headers: headers, interceptor: interceptor, responseCacherBehavior: responseCacherBehavior)
     }
 
-    public func single<T: ImmutableMappable>(url: URLConvertible, method: HTTPMethod, parameters: Parameters, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, interceptor: RequestInterceptor? = nil, responseCacherBehavior: ResponseCacher.Behavior? = nil) -> Single<[T]> {
+    public func single<T: ImmutableMappable>(url: URLConvertible, method: HTTPMethod, parameters: Parameters = [:], encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, interceptor: RequestInterceptor? = nil, responseCacherBehavior: ResponseCacher.Behavior? = nil) -> Single<[T]> {
         single(url: url, method: method, parameters: parameters, mapper: ObjectArrayMapper<T>(), encoding: encoding, headers: headers, interceptor: interceptor, responseCacherBehavior: responseCacherBehavior)
     }
 
