@@ -9,7 +9,7 @@ PODS:
   - CNIOLinux (2.27.0)
   - CNIOSHA1 (2.27.0)
   - CNIOWindows (2.27.0)
-  - HsToolKit.swift (1.1.0):
+  - HsToolKit.swift (1.3.0):
     - Alamofire (~> 5.0)
     - ObjectMapper (~> 4.0)
     - RxSwift (~> 5.0)
@@ -82,7 +82,7 @@ SPEC CHECKSUMS:
   CNIOLinux: 79227941d64216792c3c59238b0106b9e0df25bc
   CNIOSHA1: f9ce281bdb9a1ed0792da24358ed8004761258d0
   CNIOWindows: f2baa102255e986467578337ffa2f777cb6bdf7f
-  HsToolKit.swift: a72793d6b052cfbe36198353d57f99dac2bba948
+  HsToolKit.swift: 88f5c25dcf2b6fde2370f0125a8864782fbb3d90
   ObjectMapper: 1eb41f610210777375fa806bf161dc39fb832b81
   RxSwift: 1e2e1f9570186967f617e49128ed26ccf1bafc8e
   SwiftNIO: 81d33ce8c500b7e41b6cdde5f2f12330b9750219
@@ -95,4 +95,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 987a3bed84da1fb026d07991f5e585e239d9824e
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.10.2
