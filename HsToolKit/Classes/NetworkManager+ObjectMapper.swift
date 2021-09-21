@@ -64,4 +64,8 @@ extension NetworkManager {
 
     }
 
+    public enum ObjectMapperError: Error {
+        case mappingError
+    }
+
 }
