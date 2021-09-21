@@ -20,6 +20,10 @@ extension NetworkManager {
         single(url: url, method: method, parameters: parameters, mapper: ObjectArrayMapper<T>(), encoding: encoding, headers: headers, interceptor: interceptor, responseCacherBehavior: responseCacherBehavior)
     }
 
+    public func single<T: ImmutableMappable>(url: URLConvertible, method: HTTPMethod, parameters: Parameters = [:], encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, interceptor: RequestInterceptor? = nil, responseCacherBehavior: ResponseCacher.Behavior? = nil) -> Single<[String: T]> {
+        single(url: url, method: method, parameters: parameters, mapper: ObjectDictionaryMapper<T>(), encoding: encoding, headers: headers, interceptor: interceptor, responseCacherBehavior: responseCacherBehavior)
+    }
+
 }
 
 extension NetworkManager {
@@ -27,11 +31,11 @@ extension NetworkManager {
     class ObjectMapper<T: ImmutableMappable>: IApiMapper {
 
         func map(statusCode: Int, data: Any?) throws -> T {
-            guard let jsonObject = data as? [String: Any] else {
-                throw RequestError.invalidResponse(statusCode: statusCode, data: data)
+            guard let data = data else {
+                throw RequestError.emptyResponse(statusCode: statusCode)
             }
 
-            return try T(JSONObject: jsonObject)
+            return try T(JSONObject: data)
         }
 
     }
@@ -39,17 +43,25 @@ extension NetworkManager {
     class ObjectArrayMapper<T: ImmutableMappable>: IApiMapper {
 
         func map(statusCode: Int, data: Any?) throws -> [T] {
-            guard let jsonArray = data as? [[String: Any]] else {
-                throw RequestError.invalidResponse(statusCode: statusCode, data: data)
+            guard let data = data else {
+                throw RequestError.emptyResponse(statusCode: statusCode)
             }
 
-            return try jsonArray.map { try T(JSONObject: $0) }
+            return try Mapper<T>().mapArray(JSONObject: data)
         }
 
     }
 
-    public enum ObjectMapperError: Error {
-        case mappingError
+    class ObjectDictionaryMapper<T: ImmutableMappable>: IApiMapper {
+
+        func map(statusCode: Int, data: Any?) throws -> [String: T] {
+            guard let data = data else {
+                throw RequestError.emptyResponse(statusCode: statusCode)
+            }
+
+            return try Mapper<T>().mapDictionary(JSONObject: data)
+        }
+
     }
 
 }
