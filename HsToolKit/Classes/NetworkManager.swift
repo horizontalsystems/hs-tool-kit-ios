@@ -148,7 +148,7 @@ extension NetworkManager {
 extension NetworkManager {
 
     public enum RequestError: Error {
-        case emptyResponse(statusCode: Int)
+        case invalidResponse(statusCode: Int, data: Any?)
         case noResponse(reason: String?)
         case disposed
     }

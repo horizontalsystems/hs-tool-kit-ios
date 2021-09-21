@@ -32,7 +32,7 @@ extension NetworkManager {
 
         func map(statusCode: Int, data: Any?) throws -> T {
             guard let data = data else {
-                throw RequestError.emptyResponse(statusCode: statusCode)
+                throw RequestError.invalidResponse(statusCode: statusCode, data: data)
             }
 
             return try T(JSONObject: data)
@@ -44,7 +44,7 @@ extension NetworkManager {
 
         func map(statusCode: Int, data: Any?) throws -> [T] {
             guard let data = data else {
-                throw RequestError.emptyResponse(statusCode: statusCode)
+                throw RequestError.invalidResponse(statusCode: statusCode, data: data)
             }
 
             return try Mapper<T>().mapArray(JSONObject: data)
@@ -56,7 +56,7 @@ extension NetworkManager {
 
         func map(statusCode: Int, data: Any?) throws -> [String: T] {
             guard let data = data else {
-                throw RequestError.emptyResponse(statusCode: statusCode)
+                throw RequestError.invalidResponse(statusCode: statusCode, data: data)
             }
 
             return try Mapper<T>().mapDictionary(JSONObject: data)
