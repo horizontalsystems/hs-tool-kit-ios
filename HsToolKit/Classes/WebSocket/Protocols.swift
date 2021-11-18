@@ -8,13 +8,19 @@ public enum WebSocketState {
 
     public enum DisconnectError: Error {
         case notStarted
-        case socketDisconnected(reason: String)
+        case socketDisconnected(reason: DisconnectReason)
     }
 
-    public enum StateError: Error {
-        case notConnected
+    public enum DisconnectReason {
+        case networkNotReachable
+        case appInBackgroundMode
+        case unexpectedServerError
     }
+}
 
+public enum WebSocketStateError: Error {
+    case connecting
+    case couldNotConnect
 }
 
 public protocol IWebSocket: AnyObject {
