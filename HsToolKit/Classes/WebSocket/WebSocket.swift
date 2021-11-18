@@ -47,7 +47,7 @@ public class WebSocket: NSObject {
                 if reachabilityManager.isReachable {
                     self?.connect()
                 } else {
-                    self?.disconnect(code: .normalClosure, error: WebSocketState.DisconnectError.socketDisconnected(reason: "Network not reachable"))
+                    self?.disconnect(code: .normalClosure, error: WebSocketState.DisconnectError.socketDisconnected(reason: .networkNotReachable))
                 }
             })
             .disposed(by: disposeBag)
@@ -59,7 +59,7 @@ public class WebSocket: NSObject {
                     return
                 }
 
-                self?.disconnect(code: .normalClosure, error: WebSocketState.DisconnectError.socketDisconnected(reason: "Network not reachable"))
+                self?.disconnect(code: .normalClosure, error: WebSocketState.DisconnectError.socketDisconnected(reason: .networkNotReachable))
                 self?.connect()
             })
             .disposed(by: disposeBag)
@@ -68,7 +68,7 @@ public class WebSocket: NSObject {
             .foregroundFromExpiredBackgroundObservable
             .observeOn(ConcurrentDispatchQueueScheduler(qos: .userInitiated))
             .subscribe(onNext: { [weak self] _ in
-                self?.disconnect(code: .normalClosure, error: WebSocketState.DisconnectError.socketDisconnected(reason: "App in background mode"))
+                self?.disconnect(code: .normalClosure, error: WebSocketState.DisconnectError.socketDisconnected(reason: .appInBackgroundMode))
                 self?.connect()
             })
             .disposed(by: disposeBag)
@@ -128,7 +128,7 @@ public class WebSocket: NSObject {
             }
 
             self?.logger?.debug("WebSocket disconnected by server")
-            self?.disconnect(code: .unexpectedServerError, error: WebSocketState.DisconnectError.socketDisconnected(reason: "Unexpected Server Error"))
+            self?.disconnect(code: .unexpectedServerError, error: WebSocketState.DisconnectError.socketDisconnected(reason: .unexpectedServerError))
             self?.connect()
         }
 
@@ -148,6 +148,30 @@ public class WebSocket: NSObject {
 
         logger?.debug("WebSocket connected \(webSocket)")
         state = .connected
+    }
+    
+    private func verifyConnection() throws {
+        switch state {
+        case .connected: ()
+        case .connecting:
+            throw WebSocketStateError.connecting
+        case .disconnected(let error):
+            guard let disconnectError = error as? WebSocketState.DisconnectError else {
+                throw WebSocketStateError.couldNotConnect
+            }
+
+            guard case .socketDisconnected(let reason) = disconnectError else {
+                throw WebSocketStateError.connecting
+            }
+
+            switch reason {
+            case .appInBackgroundMode:
+                throw WebSocketStateError.connecting
+            case .networkNotReachable, .unexpectedServerError:
+                throw WebSocketStateError.couldNotConnect
+            }
+        }
+
     }
 
 }
@@ -169,17 +193,13 @@ extension WebSocket: IWebSocket {
     }
 
     public func send(data: Data, completionHandler: ((Error?) -> ())?) throws {
-        guard case .connected = state else {
-            throw WebSocketState.StateError.notConnected
-        }
+        try verifyConnection()
 
         nioWebSocket?.send(raw: data, opcode: .binary, fin: true, completionHandler: completionHandler)
     }
 
     public func send(ping: Data) throws {
-        guard case .connected = state else {
-            throw WebSocketState.StateError.notConnected
-        }
+        try verifyConnection()
 
         nioWebSocket?.sendPing(promise: nil)
     }
