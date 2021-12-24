@@ -378,7 +378,7 @@ extension NIOWebSocket {
                 scheme: scheme,
                 host: url.host ?? "localhost",
                 port: url.port ?? (scheme == "wss" ? 443 : 80),
-                path: url.path,
+                path: url.path + (url.hasDirectoryPath ? "/" : ""),
                 headers: headers,
                 configuration: configuration,
                 on: eventLoopGroup,
