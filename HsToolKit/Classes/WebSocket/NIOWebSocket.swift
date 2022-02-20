@@ -70,10 +70,10 @@ final class NIOWebSocket: INIOWebSocket {
     }
 
     /// If set, this will trigger automatic pings on the connection. If ping is not answered before
-    /// the next ping is sent, then the WebSocket will be presumed innactive and will be closed
+    /// the next ping is sent, then the WebSocket will be presumed inactive and will be closed
     /// automatically.
     /// These pings can also be used to keep the WebSocket alive if there is some other timeout
-    /// mechanism shutting down innactive connections, such as a Load Balancer deployed in
+    /// mechanism shutting down inactive connections, such as a Load Balancer deployed in
     /// front of the server.
     var pingInterval: TimeAmount? {
         didSet {
