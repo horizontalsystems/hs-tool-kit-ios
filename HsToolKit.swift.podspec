@@ -19,6 +19,6 @@ Pod::Spec.new do |s|
   s.dependency 'RxSwift', '~> 5.0'
   s.dependency 'ObjectMapper', '~> 4.0'
   s.dependency 'SwiftNIOWebSocket'
-  s.dependency 'SwiftNIOSSL'
-  s.dependency 'SwiftNIOFoundationCompat'
+  s.dependency 'SwiftNIOSSL', '~> 2'
+  s.dependency 'SwiftNIOFoundationCompat', '~> 2'
 end
