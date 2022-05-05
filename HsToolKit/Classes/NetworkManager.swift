@@ -41,7 +41,11 @@ public class NetworkManager {
                 return Disposables.create()
             }
 
-            var request = manager.session.request(url, method: method, parameters: parameters, encoding: encoding, headers: headers, interceptor: interceptor)
+            var request = manager
+                    .session
+                    .request(url, method: method, parameters: parameters, encoding: encoding, headers: headers, interceptor: interceptor)
+                    .validate(statusCode: 200..<400)
+                    .validate(contentType: ["application/json"])
 
             if let behavior = responseCacherBehavior {
                 request = request.cacheResponse(using: ResponseCacher(behavior: behavior))
@@ -116,6 +120,16 @@ extension NetworkManager {
         }
 
         func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> Mapper.T {
+            if let error = error as? AFError {
+                // Handle failure Http status codes
+                // By default handle only wrong status code, otherwise fallback to 400 'Bad request' code
+                if case let .responseValidationFailed(reason) = error,
+                   case let .unacceptableStatusCode(code) = reason {
+                    throw RequestError.invalidResponse(statusCode: code, data: data)
+                } else {
+                    throw error
+                }
+            }
             guard let response = response else {
                 throw RequestError.noResponse(reason: error?.localizedDescription)
             }
