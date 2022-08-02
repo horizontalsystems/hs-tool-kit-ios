@@ -117,7 +117,7 @@ extension NetworkManager {
             case .success(let result):
                 logger?.debug("API IN [\(request.id)]\n\(result)\n")
             case .failure(let error):
-                logger?.error("API IN [\(request.id)]\n\(NetworkManager.unwrap(error: error))\n")
+                logger?.error("API IN [\(request.id)] \(request.request.map { "\($0)" } ?? "")\n\(NetworkManager.unwrap(error: error))\n")
             }
         }
 
