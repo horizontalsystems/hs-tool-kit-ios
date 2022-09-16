@@ -31,7 +31,9 @@ public class WebSocket: NSObject {
         set {
             queue.async { [weak self] in
                 self?._state = newValue
-                self?.delegate?.didUpdate(state: newValue)
+                DispatchQueue.global(qos: .utility).async {
+                    self?.delegate?.didUpdate(state: newValue)
+                }
             }
         }
     }
