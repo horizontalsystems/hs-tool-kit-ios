@@ -1,5 +1,5 @@
+import UIKit
 import RxSwift
-import Foundation
 
 public class BackgroundModeObserver {
     public static let shared = BackgroundModeObserver()
