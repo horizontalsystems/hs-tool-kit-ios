@@ -1,4 +1,3 @@
-import Foundation
 import RxSwift
 import Alamofire
 
@@ -29,7 +28,7 @@ public class NetworkManager {
                 case .success(let result):
                     observer(.success(result))
                 case .failure(let error):
-                    observer(.failure(NetworkManager.unwrap(error: error)))
+                    observer(.error(NetworkManager.unwrap(error: error)))
                 }
 
                 if let postDelay = postDelay {
@@ -57,7 +56,7 @@ public class NetworkManager {
 
         return Single<Mapper.T>.create { [weak self] observer in
             guard let manager = self else {
-                observer(.failure(NetworkManager.RequestError.disposed))
+                observer(.error(NetworkManager.RequestError.disposed))
                 return Disposables.create()
             }
 
@@ -76,7 +75,7 @@ public class NetworkManager {
                 case .success(let result):
                     observer(.success(result))
                 case .failure(let error):
-                    observer(.failure(NetworkManager.unwrap(error: error)))
+                    observer(.error(NetworkManager.unwrap(error: error)))
                 }
             }
 
